@@ -1,0 +1,11 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: no
+  vars_files:
+    - creds_vault.yml
+  tasks:
+    - name: Remove agent user
+      user: name="{{creds_user}}" state=absent remove=yes
+    - name: Uninstall python packages (Debian)
+      raw: "apt-get remove -y --purge python && apt-get autoremove -y --purge"

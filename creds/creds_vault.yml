@@ -1,0 +1,40 @@
+# This file should be encrypted using ansible-vault:
+#   ansible-vault encrypt creds_vault.yml (create a vault file)
+#   ansible-vault edit creds_vault.yml    (edit vault content)
+---
+creds_ssh_private_key: |
+  -----BEGIN RSA PRIVATE KEY-----
+  MIIEpQIBAAKCAQEAwLRUtwEu0/aJqkLAHbgnWBeXHBE4fcr4UHmhH7GAMH5ldd0q
+  IeJwvT4qVbgFf/saGhn3yCV6dBHpshT6XIn+nJG18MOEk6MDNmSxXydIAOIS1qXF
+  X+x9p6PE7HskHpVakBzBAhi0Nut8UPEWbkPt20WxI2EkeAOopW6szU8baSjUiXzH
+  UzRZDfFGFgnVUuBjXC8mCgcEz95JpNJrp2H7rfXLOV75dESMuKOj8Sezc6FlYnR8
+  ldrHGE6bWOJSkJVHvBqCNGQGHRwxGR7HW5OHl9cZs6ucsrJXpFkWzwGGMNh785RE
+  Hmy2PO2EaotFqZ+0jZniIlQC6jbtZzSC7/1zNwIDAQABAoIBACreMtY/Ih6vAnLo
+  xHoYBFCZdtkcj5eUNmcYl5pITz76bzGoEH5XNEM0+A/3jumof2b9DdztUW9OqNEf
+  z44UeJp146Z6qBx7r/RCtB55y4++uvgbCmxLXKyVRvJgdmmDShEzBFCmFDj/a7lJ
+  2HaRD/GucDhxnL5B+htLIo/NoEhlFEuXQXLnnIOJxFBO1j0MVCFAQA80XFup/Rcg
+  85teoFQYAYDBpK1UjSuO20c45Xr8a4anaGYCAbPSr9xtPSnYAOpfDZWrD3YY1KcM
+  2OCRZ1Dg/Ji8GUxSFVA5hSUO5LMx7f9UbNEHZ5ualEs7EU4dBqVqKTOS5EOCdtov
+  5lFMHoECgYEA+v5FnWik2IKVPpdn7sSm4RllRAVCqATQ3MYzA6190Q10MrOlcgfj
+  vB6bmShiL+RLbNG6l6mBEMmCbI65BbWEmJb3WpCwmZC75TqOe8hCLPvXvg+7J8Eg
+  3o6tCnq/vysI56teuoXzes/cysUV/BU3/IwfTtgnsEP1XUspYBgpXHcCgYEAxIxm
+  XOx9tP3yqESl9v5HiSbPRKjw5quCbbXdyDtQWx0aQ+PFVsQ08UKsI3i29lkznZaX
+  mX9087dkiNmzIcfjI5fWKD3KsCZQsLu3gcG9fMZzeHpdHUv5tm6hpX2S45coSVVj
+  jvF6krJVk+oOiZA4XXGVAlc33L91ceVQnDX+D0ECgYEA991DQj+lC2tpl3ZN3S22
+  33UE3DeVq/eVi3Dv0CH0rg5rQebG6+V+sLhJUObgkAsTsVMswblTDBD0C+CmN00a
+  tNXhUD6zJ/QWmjlJnFQXhfTvCXLfkFLY8vBTUpYF5fPJx38k/W5rFE1R7azUGS2b
+  LHv0LxinmRqDpK4lHhC+R+ECgYEAhF5t/f0DeCZjCzIYd+yubs7lXj9M5nzxfUOz
+  VsujhYlnC/vVBmdjpGwblFQTHHvcyDAIb0cok46aNZQwEPsWnP0ALN/YpqNXSn9R
+  yiCZpfPdBnGaTkXBqjx9vv+AMqi1aBYK09ULkMpr2g8StVCctUnuacIljBShWxBu
+  JpYyQUECgYEAtvcepCChp75Zbg/4XmFozVFv77fnMP0kjNBT7moz6kP3VnQLHyrk
+  icb3W2MNojO8UnbOA9qyX48rxkLAhIyUK3VcRuoW6QaMroRtHD2w0ZkS6N30OVKP
+  iyL83k3+wJfVorAq6wkeRb5La4pA8f+jQQCpPM4HgATkbXWgDf/ee7c=
+  -----END RSA PRIVATE KEY-----
+creds_user: ansible
+creds_pass: "{{creds_hosts[inventory_hostname] if creds_hosts[inventory_hostname] is defined else (creds_ssh_private_key+inventory_hostname)|md5}}"
+creds_crypt: "{{lookup('pipe', 'mkpasswd -m sha-256 %s %.16s' | format(creds_pass, inventory_hostname|md5))}}"
+creds_hosts:
+  host-a: uCQBVDg40zQ3FTxolsJHEODhMxvhdc2E
+  host-b: me7AXssyx1OyHKz9cP9MwKTyhozEB3u2
+  host-c: r8A1tpoSHcseYCj22c8S4BcrcjTC4AH4
+  host-d: Cro6GtHkEQSu55AME3fPt04Da1urFJfC

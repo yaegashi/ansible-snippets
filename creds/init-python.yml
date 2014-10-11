@@ -1,0 +1,13 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: no
+  tasks:
+    - name: Test python executable
+      raw: python --version
+      register: p
+      ignore_errors: yes
+    - name: Install python packages (Debian)
+      raw: "apt-get update &&
+            DEBIAN_FRONTEND=noninteractive apt-get install -y python"
+      when: p|failed

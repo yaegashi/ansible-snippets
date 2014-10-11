@@ -1,0 +1,8 @@
+---
+- hosts: all
+  sudo: yes
+  vars_files:
+    - creds_vault.yml
+    - creds_ansible.yml
+  tasks:
+    - ping:

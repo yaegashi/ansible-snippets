@@ -1,0 +1,16 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: no
+  vars_files:
+    - creds_vault.yml
+  tasks:
+    - fail: msg="No credential information for {{inventory_hostname}}
+                 in creds_vault.yml!"
+      when: creds_hosts[inventory_hostname] is not defined
+      ignore_errors: yes
+    - name: Create agent user
+      user: name="{{creds_user}}" system=yes state=present
+            password="{{creds_crypt}}" groups=sudo
+    - name: Set SSH authorized key for agent user
+      authorized_key: user="{{creds_user}}" key="{{creds_ssh_public_key}}"
