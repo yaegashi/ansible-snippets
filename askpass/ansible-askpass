@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+
+ASKPASS=${0##*/}
+KEY=$(keyctl request user "$ASKPASS" @s 2>/dev/null || true)
+
+case "$1" in
+-d)
+        if test -n "$KEY" && keyctl unlink $KEY >/dev/null 2>&1; then
+                echo "$ASKPASS: Password removed." >&2
+        fi
+        ;;
+*)
+        if test -z "$KEY"; then
+                read -s -p "$ASKPASS: Enter password: " a
+                KEY=$(keyctl add user "$ASKPASS" "$a" @s)
+                echo >&2
+                if test -z "$KEY"; then
+                        echo "$ASKPASS: Failed to save password." >&2
+                        exit 1
+                else
+                        echo "$ASKPASS: Password saved." >&2
+                        echo "$ASKPASS: Run \"$ASKPASS -d\" to remove." >&2
+                fi
+        fi
+        keyctl timeout $KEY 300
+        if test -t 1; then
+                echo "$ASKPASS: No output to tty." >&2
+        else
+                keyctl pipe $KEY
+        fi
+        ;;
+esac
