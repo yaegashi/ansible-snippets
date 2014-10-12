@@ -23,6 +23,9 @@ class CallbackModule(object):
             y = getattr(x, 'module_vars', None)
             if y: y['creds_ssh_public_key'] = pub
 
+        ssh_agent = self.play.vars.get('creds_ssh_agent', True)
+        if not ssh_agent: return
+
         msg = Message()
         msg.add_byte(chr(self.SSH2_AGENTC_ADD_IDENTITY))
         msg.add_string(key.get_name())
