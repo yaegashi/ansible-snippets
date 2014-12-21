@@ -1,5 +1,5 @@
 from struct import unpack
-from ansible.utils import warning
+from ansible.utils import warning, merge_hash
 from ansible.callbacks import display
 from paramiko import RSAKey, Agent, Message
 import StringIO
@@ -9,8 +9,12 @@ class CallbackModule(object):
     SSH2_AGENTC_ADD_IDENTITY = 17
     KEY_COMMENT = 'Ansible private key'
 
-    def playbook_on_play_start(self, *args, **kwargs):
-        pem = self.play.vars.get('creds_ssh_private_key', None)
+    def playbook_on_play_start(self, name):
+        play_vars = merge_hash(self.play.vars,
+                               getattr(self.play, 'vars_file_vars', {}))
+        play_vars = merge_hash(play_vars,
+                               getattr(self.playbook, 'extra_vars', {}))
+        pem = play_vars.get('creds_ssh_private_key', None)
         if pem is None: return
         key = RSAKey.from_private_key(StringIO.StringIO(pem))
 
@@ -23,7 +27,7 @@ class CallbackModule(object):
             y = getattr(x, 'module_vars', None)
             if y: y['creds_ssh_public_key'] = pub
 
-        ssh_agent = self.play.vars.get('creds_ssh_agent', True)
+        ssh_agent = play_vars.get('creds_ssh_agent', True)
         if not ssh_agent: return
 
         msg = Message()
